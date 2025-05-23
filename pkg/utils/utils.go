@@ -18,6 +18,17 @@ type FileExtStruct struct {
 	Music     []string
 }
 
+type FolderStruct struct {
+	LinuxImages      string
+	LinuxMusic       string
+	LinuxDocuments   string
+	LinuxVideos      string
+	WindowsImages    string
+	WindowsMusic     string
+	WindowsDocuments string
+	WindowsVideos    string
+}
+
 var FileExtArr FileExtStruct = FileExtStruct{
 	Images:    []string{".png", ".wepb", ".jpg", ".jpeg"},
 	Videos:    []string{".mp4", ".mov", ".mkv"},
@@ -29,6 +40,16 @@ func GetOperatingSystem() string {
 	OS := runtime.GOOS
 	return OS
 }
+
+// README: not used for now. will be removed
+// func getUserName() string {
+// 	username, err := user.Current()
+// 	if err != nil {
+// 		errors.ErrorsHandler(err, "FATAL")
+// 	}
+
+// 	return username.Username
+// }
 
 func MoveFile(filePath string) {
 	canMove := checkForTempFile(filePath)
@@ -64,48 +85,57 @@ func checkForTempFile(filename string) bool {
 }
 
 func PlaceToMove(fileExt string, filePath string) {
-	// check if its document
 	for _, ext := range FileExtArr.Documents {
-		if ext != fileExt {
-			continue
-		} else {
-			filename := path.Base(filePath)
-			newPath := fmt.Sprintf("/home/thedevisi/Documents/%v", filename)
+		if ext == fileExt {
+			filename := filepath.Base(filePath)
+			fileFolder := GetDefaultFolder("Documents")
+			if fileFolder == "" {
+				errors.ErrorsHandler(
+					fmt.Errorf("GetDefaultFolder returned empty path for Documents"), "ERROR")
+				return
+			}
+			newPath := filepath.Join(fileFolder, filename)
 			oldPath, _ := filepath.Abs(filePath)
-			os.Rename(oldPath, newPath)
+			if err := os.Rename(oldPath, newPath); err != nil {
+				errors.ErrorsHandler(err, "ERROR")
+			}
+			return
 		}
 	}
 	for _, ext := range FileExtArr.Images {
-		if ext != fileExt {
-			continue
-		} else {
-			filename := path.Base(filePath)
-			newPath := fmt.Sprintf("/home/thedevisi/Pictures/%v", filename)
+		if ext == fileExt {
+			filename := filepath.Base(filePath)
+			fileFolder := GetDefaultFolder("Pictures")
+			newPath := filepath.Join(fileFolder, filename)
 			oldPath, _ := filepath.Abs(filePath)
-			os.Rename(oldPath, newPath)
+			if err := os.Rename(oldPath, newPath); err != nil {
+				errors.ErrorsHandler(err, "ERROR")
+			}
+			return
 		}
 	}
-
 	for _, ext := range FileExtArr.Videos {
-		if ext != fileExt {
-			continue
-		} else {
-			filename := path.Base(filePath)
-			newPath := fmt.Sprintf("/home/thedevisi/Videos/%v", filename)
+		if ext == fileExt {
+			filename := filepath.Base(filePath) // исправлено!
+			fileFolder := GetDefaultFolder("Videos")
+			newPath := filepath.Join(fileFolder, filename)
 			oldPath, _ := filepath.Abs(filePath)
-			os.Rename(oldPath, newPath)
+			if err := os.Rename(oldPath, newPath); err != nil {
+				errors.ErrorsHandler(err, "ERROR")
+			}
+			return
 		}
 	}
-
 	for _, ext := range FileExtArr.Music {
-		if ext != fileExt {
-			continue
-		} else {
-			filename := path.Base(filePath)
-			newPath := fmt.Sprintf("/home/thedevisi/Music/%v", filename)
+		if ext == fileExt {
+			filename := filepath.Base(filePath) // исправлено!
+			fileFolder := GetDefaultFolder("Music")
+			newPath := filepath.Join(fileFolder, filename)
 			oldPath, _ := filepath.Abs(filePath)
-			os.Rename(oldPath, newPath)
+			if err := os.Rename(oldPath, newPath); err != nil {
+				errors.ErrorsHandler(err, "ERROR")
+			}
+			return
 		}
 	}
-
 }
