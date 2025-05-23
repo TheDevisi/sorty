@@ -4,13 +4,21 @@ package watcher
 
 import (
 	"fmt"
-	"log"
 	"os/user"
 	"sorty/internal/errors"
+	"sorty/logger"
 	"sorty/pkg/utils"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/rs/zerolog"
 )
+
+var log *zerolog.Logger
+
+func init() {
+	config := logger.NewLogConfig()
+	log = logger.NewLogger(config)
+}
 
 // based on operating system returning "downloads path"
 func downloadsPath(os string) string {
@@ -33,6 +41,8 @@ func WatchDirectory() {
 	// now let's setup fsnotify...
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
+		// log error with stack trace before handling errors
+		log.Error().Stack().Err(err).Msg("Unable to create fsnotify watcher")
 		errors.ErrorsHandler(err, "")
 	}
 
@@ -46,16 +56,16 @@ func WatchDirectory() {
 				if !ok {
 					return
 				}
-				log.Println("event:", event)
+				log.Info().Msgf("Event: %v", event)
 				utils.MoveFile(event.Name)
 				if event.Has(fsnotify.Write) {
-					log.Println("modified file:", event.Name)
+					log.Info().Msgf("Modified file: %v", event.Name)
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
 				}
-				log.Println("error:", err)
+				log.Error().Stack().Err(err).Msg("Watcher error")
 			}
 		}
 	}()
@@ -63,7 +73,9 @@ func WatchDirectory() {
 	// Add a path.
 	err = watcher.Add(folderPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Error().Stack().Str("path", folderPath).Err(err).Msg("Failed to add directory watch")
+	} else {
+		log.Info().Str("path", folderPath).Msg("Starting directory watch")
 	}
 
 	// Block main goroutine forever.

@@ -69,7 +69,7 @@ func checkForTempFile(filename string) bool {
 		}
 		fileStat, err := os.Stat(filename)
 		if err != nil {
-			errors.ErrorsHandler(err, "FATAL")
+			errors.ErrorsHandler(err, "WARN")
 			return false
 		}
 
@@ -116,7 +116,7 @@ func PlaceToMove(fileExt string, filePath string) {
 	}
 	for _, ext := range FileExtArr.Videos {
 		if ext == fileExt {
-			filename := filepath.Base(filePath) // исправлено!
+			filename := filepath.Base(filePath)
 			fileFolder := GetDefaultFolder("Videos")
 			newPath := filepath.Join(fileFolder, filename)
 			oldPath, _ := filepath.Abs(filePath)
@@ -128,7 +128,7 @@ func PlaceToMove(fileExt string, filePath string) {
 	}
 	for _, ext := range FileExtArr.Music {
 		if ext == fileExt {
-			filename := filepath.Base(filePath) // исправлено!
+			filename := filepath.Base(filePath)
 			fileFolder := GetDefaultFolder("Music")
 			newPath := filepath.Join(fileFolder, filename)
 			oldPath, _ := filepath.Abs(filePath)
