@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os/user"
 	"sorty/internal/errors"
+	"sorty/internal/utils"
 	"sorty/logger"
-	"sorty/pkg/utils"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/rs/zerolog"
@@ -20,6 +20,7 @@ func init() {
 	log = logger.NewLogger(config)
 }
 
+// TODO replace with new config-based logic
 // based on operating system returning "downloads path"
 func downloadsPath(os string) string {
 	if os == "linux" {
@@ -81,5 +82,3 @@ func WatchDirectory() {
 	// Block main goroutine forever.
 	<-make(chan struct{})
 }
-
-// now handle write events
