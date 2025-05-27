@@ -3,8 +3,11 @@
 package watcher
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"os/user"
+	"sorty/config"
 	"sorty/internal/errors"
 	"sorty/internal/utils"
 	"sorty/logger"
@@ -20,25 +23,34 @@ func init() {
 	log = logger.NewLogger(config)
 }
 
-// TODO replace with new config-based logic
-// based on operating system returning "downloads path"
-func downloadsPath(os string) string {
-	if os == "linux" {
-		userName, _ := user.Current()
-
-		return fmt.Sprintf("%v/Downloads", userName.HomeDir)
-	} else if os == "windows" {
-		userName, err := user.Current()
-		if err != nil {
-			errors.ErrorsHandler(err, "")
-		}
-		return fmt.Sprintf("%v\\Downloads", userName.HomeDir) // idk if this works
+func monitorFolder() string {
+	var fileData *config.Config
+	OS := utils.GetOperatingSystem()
+	userInfo, err := user.Current()
+	if err != nil {
+		errors.ErrorsHandler(err, "FATAL")
 	}
-	return "~/Downloads" // Default to unix-style path
-}
+	userHome := userInfo.HomeDir
+	if OS != "windows" {
+		file, err := os.ReadFile(fmt.Sprintf("%v/.config/sorty/config.json", userHome))
+		if err != nil {
+			errors.ErrorsHandler(err, "FATAL")
+		}
 
+		json.Unmarshal(file, &fileData)
+	} else {
+		file, err := os.ReadFile("C\\Program Files\\sorty\\config.json")
+		if err != nil {
+			errors.ErrorsHandler(err, "FATAL")
+		}
+		json.Unmarshal(file, &fileData)
+
+	}
+	return fileData.WatchFolder
+
+}
 func WatchDirectory() {
-	folderPath := downloadsPath(utils.GetOperatingSystem())
+	folderPath := monitorFolder()
 	// now let's setup fsnotify...
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
