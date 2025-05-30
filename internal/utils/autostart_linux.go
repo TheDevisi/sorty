@@ -4,6 +4,7 @@
 package utils
 
 import (
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
@@ -11,10 +12,14 @@ import (
 	"os/user"
 	"sorty/logger"
 
+	"github.com/getlantern/systray"
 	"github.com/rs/zerolog"
 )
 
 var log *zerolog.Logger
+
+//go:embed imgs/logo.ico
+var iconData []byte
 
 // setup logging
 func init() {
@@ -81,6 +86,27 @@ WantedBy=multi-user.target`, user.Username)
 }
 
 func InitTray() {
-	log.Debug().Msg("tray not exist. yet. (linux ver)")
-	// TODO: implement tray
+	log.Debug().Msg("Initializing system tray (Linux version)")
+	systray.Run(tray, exitTray)
+}
+
+func tray() {
+	systray.SetTemplateIcon(iconData, iconData)
+	systray.SetTitle("Sorty")
+	systray.SetTooltip("IM WORKING YAY")
+
+	mQuit := systray.AddMenuItem("Quit", "dude, name says for itself. just close the tray")
+	log.Info().Msg("System tray initialized successfully")
+
+	go func() {
+		<-mQuit.ClickedCh
+		log.Info().Msg("Quit requested through system tray")
+		systray.Quit()
+	}()
+}
+
+// function to exit the tray
+func exitTray() {
+	log.Info().Msg("Application shutting down")
+	os.Exit(0)
 }

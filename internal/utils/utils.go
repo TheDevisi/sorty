@@ -57,34 +57,50 @@ func checkForTmpFile(filename string) bool {
 func PlaceToMove(fileExt string, filePath string) {
 	OS := GetOperatingSystem()
 
-	if OS != "windows" {
-		userInfo, err := user.Current()
-		if err != nil {
-			errors.ErrorsHandler(err, "FATAL")
-		}
-		userHome := userInfo.HomeDir
-		data, err := os.ReadFile(fmt.Sprintf("%v/.config/sorty/config.json", userHome))
-		if err != nil {
-			errors.ErrorsHandler(err, "FATAL")
-		}
-		var unmarshaledData config.Config
-		err = json.Unmarshal(data, &unmarshaledData)
-		if err != nil {
-			errors.ErrorsHandler(err, "FATAL")
-		}
+	userInfo, err := user.Current()
+	if err != nil {
+		errors.ErrorsHandler(err, "FATAL")
+		return
+	}
 
-		for path, exts := range unmarshaledData.MonitorFiles {
-			for _, ext := range exts {
-				if ext == fileExt {
-					newPath := fmt.Sprintf("%v/%v", path, filepath.Base(filePath))
-					err := os.Rename(filePath, newPath)
-					if err != nil {
-						errors.ErrorsHandler(err, "WARN")
-					}
-					break
+	var configPath string
+	if OS == "windows" {
+		programFiles := os.Getenv("ProgramFiles")
+		if programFiles == "" {
+			errors.ErrorsHandler(fmt.Errorf("ProgramFiles env variable not found"), "FATAL")
+			return
+		}
+		configPath = filepath.Join(programFiles, "Sorty", "config.json")
+	} else {
+		configPath = filepath.Join(userInfo.HomeDir, ".config", "sorty", "config.json")
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		errors.ErrorsHandler(err, "FATAL")
+		return
+	}
+
+	var unmarshaledData config.Config
+	err = json.Unmarshal(data, &unmarshaledData)
+	if err != nil {
+		errors.ErrorsHandler(err, "FATAL")
+		return
+	}
+
+	for path, exts := range unmarshaledData.MonitorFiles {
+		for _, ext := range exts {
+			if ext == fileExt {
+				newPath := filepath.Join(path, filepath.Base(filePath))
+				log.Debug().Str("constructedPath", newPath).Msg("Constructed path for file move")
+				err := os.Rename(filePath, newPath)
+				if err != nil {
+					errors.ErrorsHandler(err, "WARN")
+				} else {
+					log.Info().Str("source", filePath).Str("destination", newPath).Msg("File moved successfully")
 				}
+				return
 			}
 		}
-
 	}
 }
