@@ -69,10 +69,10 @@ func WatchDirectory() {
 				if !ok {
 					return
 				}
-				log.Info().Msgf("Event: %v", event)
+				fmt.Printf("Event: %v", event)
 				utils.MoveFile(event.Name)
 				if event.Has(fsnotify.Write) {
-					log.Info().Msgf("Modified file: %v", event.Name)
+					fmt.Printf("Modified file: %v", event.Name)
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {

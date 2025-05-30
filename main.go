@@ -18,20 +18,16 @@ func init() {
 }
 
 func main() {
-	log.Info().Msg("Starting system tray initialization")
-	go utils.InitTray()
-
 	log.Info().Msg("Checking configuration file")
 	config.CheckIfConfigExists()
 
-	log.Info().Msg("Setting up auto startup capability if it's not it")
+	log.Info().Msg("Setting up auto startup capability if it's not set")
 	if err := utils.EnableAutoStart(); err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to enable auto-start")
+		log.Error().Err(err).Msg("Failed to set up autostart")
 	}
+	go watcher.WatchDirectory()
 
+	log.Info().Msg("Starting system tray initialization")
+	utils.InitTray()
 	log.Info().Msg("Initializing directory watcher")
-	watcher.WatchDirectory()
-
 }
