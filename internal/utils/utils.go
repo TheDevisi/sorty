@@ -53,7 +53,9 @@ func checkForTmpFile(filename string) bool {
 	return false
 }
 
-// Searching place to move based on operating system and moving
+// PlaceToMove moves a file to a destination directory based on its extension and the current operating system's configuration.
+// 
+// The function reads a configuration file that maps file extensions to destination directories. It determines the appropriate config file path depending on the OS, loads the configuration, and moves the file if a matching extension is found. If errors occur during user lookup, config loading, or file moving, they are handled and logged with appropriate severity. The function returns after the first successful move attempt or upon encountering a fatal error.
 func PlaceToMove(fileExt string, filePath string) {
 	OS := GetOperatingSystem()
 

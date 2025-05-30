@@ -21,16 +21,17 @@ var log *zerolog.Logger
 //go:embed imgs/logo.ico
 var iconData []byte
 
-// setup logging
+// init initializes the package-level logger with a new logging configuration.
 func init() {
 	config := logger.NewLogConfig()
 	log = logger.NewLogger(config)
 }
 
-/*
-this function checks if service already installed.
-if not then creating systemd service
-*/
+// EnableAutoStart installs and enables the Sorty service as a systemd service if it is not already installed.
+//
+// If the Sorty executable is not found in /usr/local/bin, this function moves the current executable there,
+// creates a systemd service file to run it as the current user, and enables the service to start on boot.
+// Returns an error if the service is already installed or if any installation step fails.
 func EnableAutoStart() error {
 	log.Debug().Msg("Checking if Sorty service exists in /usr/local/bin")
 
@@ -85,11 +86,13 @@ WantedBy=multi-user.target`, user.Username)
 	return fmt.Errorf("sorty is already installed in /usr/local/bin")
 }
 
+// InitTray initializes and starts the system tray icon with menu options for the Linux version.
 func InitTray() {
 	log.Debug().Msg("Initializing system tray (Linux version)")
 	systray.Run(tray, exitTray)
 }
 
+// tray configures the system tray icon, title, tooltip, and adds a "Quit" menu item with its event handler.
 func tray() {
 	systray.SetTemplateIcon(iconData, iconData)
 	systray.SetTitle("Sorty")
@@ -105,7 +108,7 @@ func tray() {
 	}()
 }
 
-// function to exit the tray
+// exitTray handles cleanup and terminates the application when the system tray is closed.
 func exitTray() {
 	log.Info().Msg("Application shutting down")
 	os.Exit(0)

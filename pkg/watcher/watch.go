@@ -49,6 +49,9 @@ func monitorFolder() string {
 	return fileData.WatchFolder
 
 }
+// WatchDirectory monitors a configured directory for file system events and processes file changes as they occur.
+//
+// Sets up a file system watcher on the directory specified in the configuration, handling file events by invoking file processing logic and logging errors as needed. The function blocks indefinitely to keep the watcher active.
 func WatchDirectory() {
 	folderPath := monitorFolder()
 	// now let's setup fsnotify...
