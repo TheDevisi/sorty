@@ -11,12 +11,14 @@ import (
 
 var log *zerolog.Logger
 
+// init initializes the global logger for the Sorty application.
 func init() {
 	config := logger.NewLogConfig()
 	log = logger.NewLogger(config)
 	log.Info().Msg("Initializing Sorty application")
 }
 
+// main initializes the Sorty application, verifies configuration, sets up auto-start, starts directory watching in the background, and initializes the system tray.
 func main() {
 	log.Info().Msg("Checking configuration file")
 	config.CheckIfConfigExists()
