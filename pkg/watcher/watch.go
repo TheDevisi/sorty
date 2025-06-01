@@ -24,7 +24,7 @@ func init() {
 }
 
 func monitorFolder() string {
-	var fileData *config.Config
+	var fileData = new(config.Config)
 	OS := utils.GetOperatingSystem()
 	userInfo, err := user.Current()
 	if err != nil {
