@@ -18,7 +18,7 @@ import (
 type Config struct {
 	LogLevel     int16               `json:"log_level"`
 	WatchFolder  string              `json:"watch_folder"`
-	MonitorFiles map[string][]string `json:"monitor_files`
+	MonitorFiles map[string][]string `json:"monitor_files"`
 }
 
 var log *zerolog.Logger
