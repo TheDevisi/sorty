@@ -22,9 +22,9 @@ func main() {
 	config.CheckIfConfigExists()
 
 	log.Info().Msg("Setting up auto startup capability if it's not set")
-	if err := utils.EnableAutoStart(); err != nil {
-		log.Error().Err(err).Msg("Failed to set up autostart")
-	}
+	// if err := utils.EnableAutoStart(); err != nil {
+	// 	log.Error().Err(err).Msg("Failed to set up autostart")
+	// }
 	go watcher.WatchDirectory()
 
 	log.Info().Msg("Starting system tray initialization")

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"path/filepath"
 	"sorty/logger"
 	"syscall"
 
@@ -21,8 +22,17 @@ type Config struct {
 	MonitorFiles map[string][]string `json:"monitor_files"`
 }
 
-var configPath string = "C:\\Program Files\\sorty\\config.json"
+var configPath string
 var log *zerolog.Logger
+
+func init() {
+	localAppData := os.Getenv("LOCALAPPDATA")
+	configPath = filepath.Join(localAppData, "sorty", "config.json")
+	os.MkdirAll(filepath.Dir(configPath), 0755)
+
+	config := logger.NewLogConfig()
+	log = logger.NewLogger(config)
+}
 
 var (
 	modShell32               = syscall.NewLazyDLL("shell32.dll")
@@ -70,9 +80,6 @@ func createConfig() {
 }
 
 func generateConfig() Config {
-
-	os.Mkdir("C:\\Program Files\\sorty", 0755)
-
 	log.Info().Msg("Can't find config. Creating a new one")
 	_, err := os.Create(configPath)
 	if err != nil {

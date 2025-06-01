@@ -3,7 +3,6 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"os/user"
 	"path"
@@ -65,12 +64,8 @@ func PlaceToMove(fileExt string, filePath string) {
 
 	var configPath string
 	if OS == "windows" {
-		programFiles := os.Getenv("ProgramFiles")
-		if programFiles == "" {
-			errors.ErrorsHandler(fmt.Errorf("ProgramFiles env variable not found"), "FATAL")
-			return
-		}
-		configPath = filepath.Join(programFiles, "Sorty", "config.json")
+		localAppData := os.Getenv("LOCALAPPDATA")
+		configPath = filepath.Join(localAppData, "Sorty", "config.json")
 	} else {
 		configPath = filepath.Join(userInfo.HomeDir, ".config", "sorty", "config.json")
 	}

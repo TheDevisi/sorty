@@ -39,12 +39,13 @@ func monitorFolder() string {
 
 		json.Unmarshal(file, &fileData)
 	} else {
-		file, err := os.ReadFile("C\\Program Files\\sorty\\config.json")
+		localAppData := os.Getenv("LOCALAPPDATA")
+		configPath := fmt.Sprintf("%s/sorty/config.json", localAppData)
+		file, err := os.ReadFile(configPath)
 		if err != nil {
 			errors.ErrorsHandler(err, "FATAL")
 		}
 		json.Unmarshal(file, &fileData)
-
 	}
 	return fileData.WatchFolder
 
