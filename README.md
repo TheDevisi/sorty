@@ -7,7 +7,7 @@
 [![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/)
 [![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://www.linux.org/)
 
-![Sorty Demo](demo/demo.gif)
+![Sorty Demo](demo/demo.mp4)
 
 
 ## 🌟 Overview
