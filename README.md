@@ -116,7 +116,7 @@ Sorty creates its configuration automatically on first run:
  "log_level": 1,
  "watch_folder": "C:\\Users\\<username>\\Downloads",
  "monitor_files": {
-  "C:\\Users\\<username>\\Dildo": [
+  "C:\\Users\\<username>\\Documents": [
    ".pdf",
    ".doc",
    ".docx"
