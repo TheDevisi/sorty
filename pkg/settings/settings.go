@@ -2,9 +2,11 @@ package settings
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sorty/config"
+	"sorty/internal/utils"
 	"sorty/logger"
 	"strings"
 
@@ -115,6 +117,10 @@ func showSettingsWindow() {
 		window.Close()
 	})
 
+	sortInst := widget.NewButton("Sort instantly", func() {
+		sortInstantlyWindow(window.Canvas())
+	})
+
 	form := container.NewVBox(
 		widget.NewLabel("Settings"),
 		widget.NewLabel("Watch Folder:"),
@@ -123,6 +129,7 @@ func showSettingsWindow() {
 		mappingsList,
 		addMappingBtn,
 		saveButton,
+		sortInst,
 	)
 
 	window.SetContent(form)
@@ -187,4 +194,52 @@ func saveConfig(configData *config.Config) {
 	}
 
 	log.Info().Msg("Settings saved successfully")
+}
+func SortInstantly(folderPath string) {
+	dirFiles, err := os.ReadDir(folderPath)
+	if err != nil {
+		//
+	}
+	var files []string
+	var filesPath []string
+	for _, file := range dirFiles {
+		fmt.Println(file.Name())
+		files = append(files, file.Name())
+		fullPath := filepath.Join(folderPath, file.Name())
+		filesPath = append(filesPath, fullPath)
+	}
+	for i, file := range filesPath {
+		if i < 0 {
+			break
+		}
+		utils.MoveFile(file)
+	}
+
+}
+
+func sortInstantlyWindow(canvas fyne.Canvas) {
+	sortPath := widget.NewEntry()
+	sortPath.SetPlaceHolder("Enter a path to the folder")
+
+	var popup *widget.PopUp
+
+	content := container.NewVBox(
+		widget.NewLabel("Sort instantly"),
+		sortPath,
+		widget.NewButton("Sort", func() {
+			path := sortPath.Text
+			if strings.TrimSpace(path) == "" {
+				return
+			}
+			SortInstantly(path)
+			// move all files from folder to their destinations
+
+		}),
+		widget.NewButton("Close", func() {
+			popup.Hide()
+		}),
+	)
+
+	popup = widget.NewModalPopUp(content, canvas)
+	popup.Show()
 }

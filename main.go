@@ -2,7 +2,7 @@ package main
 
 import (
 	"sorty/config"
-	"sorty/internal/utils"
+	"sorty/internal/tray"
 	"sorty/logger"
 	"sorty/pkg/settings"
 	"sorty/pkg/watcher"
@@ -26,7 +26,7 @@ func main() {
 	go watcher.WatchDirectory()
 
 	log.Info().Msg("Starting system tray initialization")
-	go utils.InitTray()
+	go tray.InitTray()
 	log.Info().Msg("Initializing directory watcher")
 
 	settings.RunSettingsWindow()

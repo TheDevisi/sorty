@@ -8,17 +8,12 @@ import (
 	"os"
 	"path/filepath"
 	"sorty/logger"
-	"sorty/pkg/settings"
 
-	"github.com/getlantern/systray"
 	"github.com/rs/zerolog"
 	"golang.org/x/sys/windows/registry"
 )
 
 var log *zerolog.Logger
-
-//go:embed imgs/logo.ico
-var iconData []byte
 
 func init() {
 	config := logger.NewLogConfig()
@@ -35,7 +30,6 @@ getting path of executable and putting this into registry key
 func EnableAutoStart() error {
 	log.Debug().Msg("Starting autostart setup")
 
-	InitTray()
 	p, err := os.Executable()
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get executable path")
@@ -62,40 +56,4 @@ func EnableAutoStart() error {
 
 	log.Info().Msg("Successfully set up autostart in Windows registry")
 	return nil
-}
-
-// init sorty tray on Windows
-func InitTray() {
-	log.Debug().Msg("Initializing system tray")
-	systray.Run(tray, exitTray)
-}
-
-// setting up the tray
-func tray() {
-	systray.SetTemplateIcon(iconData, iconData)
-	systray.SetTitle("Sorty")
-	systray.SetTooltip("IM WORKING YAY")
-
-	mSettings := systray.AddMenuItem("Settings", "Open settings window")
-	mQuit := systray.AddMenuItem("Quit", "dude, name says for itself. just close the tray")
-	log.Info().Msg("System tray initialized successfully")
-
-	go func() {
-		for {
-			select {
-			case <-mSettings.ClickedCh:
-				log.Info().Msg("Settings requested through system tray")
-				go settings.ShowSettingsWindow()
-			case <-mQuit.ClickedCh:
-				log.Info().Msg("Quit requested through system tray")
-				systray.Quit()
-			}
-		}
-	}()
-}
-
-// function to exit the tray
-func exitTray() {
-	log.Info().Msg("Application shutting down")
-	os.Exit(0)
 }

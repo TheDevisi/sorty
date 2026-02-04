@@ -50,6 +50,7 @@ func monitorFolder() string {
 	return fileData.WatchFolder
 
 }
+
 func WatchDirectory() {
 	folderPath := monitorFolder()
 	// now let's setup fsnotify...
