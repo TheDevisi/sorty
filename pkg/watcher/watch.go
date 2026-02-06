@@ -23,7 +23,7 @@ func init() {
 	log = logger.NewLogger(config)
 }
 
-func monitorFolder() string {
+func monitorFolder() []string {
 	var fileData = new(config.Config)
 	OS := utils.GetOperatingSystem()
 	userInfo, err := user.Current()
@@ -47,7 +47,7 @@ func monitorFolder() string {
 		}
 		json.Unmarshal(file, &fileData)
 	}
-	return fileData.WatchFolder
+	return fileData.WatchFolders
 
 }
 
@@ -86,13 +86,14 @@ func WatchDirectory() {
 	}()
 
 	// Add a path.
-	err = watcher.Add(folderPath)
-	if err != nil {
-		log.Error().Stack().Str("path", folderPath).Err(err).Msg("Failed to add directory watch")
-	} else {
-		log.Info().Str("path", folderPath).Msg("Starting directory watch")
+	for _, folder := range folderPath {
+		err = watcher.Add(folder)
+		if err != nil {
+			log.Error().Stack().Str("path", folder).Err(err).Msg("Failed to add directory watch")
+		} else {
+			log.Info().Str("path", folder).Msg("Starting directory watch")
+		}
 	}
-
 	// Block main goroutine forever.
 	<-make(chan struct{})
 }

@@ -17,7 +17,7 @@ import (
 // Structure of config.json
 type Config struct {
 	LogLevel     int16               `json:"log_level"`
-	WatchFolder  string              `json:"watch_folder"`
+	WatchFolders []string            `json:"watch_folders"`
 	MonitorFiles map[string][]string `json:"monitor_files"`
 }
 
@@ -76,7 +76,7 @@ func generateConfig() (Config, string) {
 	}
 	var configFile Config = Config{
 		LogLevel:     1,
-		WatchFolder:  downloadsPath,
+		WatchFolders: []string{downloadsPath},
 		MonitorFiles: defaultMonitorFolders,
 	}
 	return configFile, systemConfigFolder

@@ -43,13 +43,13 @@ func RunSettingsWindow() {
 func showSettingsWindow() {
 	myApp := app.New()
 	window := myApp.NewWindow("Sorty Settings")
-
-	watchFolderEntry := widget.NewEntry()
-	watchFolderEntry.SetPlaceHolder("Watch Folder Path")
-
 	configData := loadConfig()
+
+	watchFolderEntry := widget.NewMultiLineEntry()
+	watchFolderEntry.SetPlaceHolder("One folder per line")
+
 	if configData != nil {
-		watchFolderEntry.SetText(configData.WatchFolder)
+		watchFolderEntry.SetText(strings.Join(configData.WatchFolders, "\n"))
 	}
 
 	mappingsList := widget.NewList(
@@ -111,7 +111,10 @@ func showSettingsWindow() {
 
 	saveButton := widget.NewButton("Save", func() {
 		if configData != nil {
-			configData.WatchFolder = watchFolderEntry.Text
+			configData.WatchFolders = strings.Split(
+				strings.TrimSpace(watchFolderEntry.Text),
+				"\n",
+			)
 			saveConfig(configData)
 		}
 		window.Close()
