@@ -20,7 +20,7 @@ var iconData []byte
 func tray() {
 	systray.SetTemplateIcon(iconData, iconData)
 	systray.SetTitle("Sorty")
-	systray.SetTooltip("IM WORKING YAY")
+	systray.SetTooltip("Sorty managment")
 
 	mSettings := systray.AddMenuItem("Settings", "Open settings window")
 	mQuit := systray.AddMenuItem("Quit", "dude, name says for itself. just close the tray")

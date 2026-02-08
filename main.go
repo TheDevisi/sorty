@@ -3,6 +3,7 @@ package main
 import (
 	"sorty/config"
 	"sorty/internal/tray"
+	"sorty/internal/utils"
 	"sorty/logger"
 	"sorty/pkg/settings"
 	"sorty/pkg/watcher"
@@ -19,6 +20,7 @@ func init() {
 }
 
 func main() {
+	utils.EnsureInstalled()
 	log.Info().Msg("Checking configuration file")
 	config.CheckIfConfigExists()
 
