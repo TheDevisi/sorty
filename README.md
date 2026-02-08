@@ -9,7 +9,7 @@
 
 ![Sorty Demo](demo/demo.mp4)
 
-
+# ! For now project is abonded. ! 
 ## 🌟 Overview
 
 Sorty is your intelligent file organization companion that automatically keeps your downloads folder tidy. It watches for new files and instantly moves them to the appropriate location based on their type - be it documents, pictures, music, or videos.
@@ -80,7 +80,10 @@ Sorty creates its configuration automatically on first run:
 ```json
 {
  "log_level": 1,
- "watch_folder": "/home/<username>/Downloads",
+   "watch_folders": [
+    "/home/<username>/Downloads",
+    "/any/other/folders/..."
+  ],
  "monitor_files": {
   "/home/<username>/Documents": [
    ".pdf",
@@ -104,7 +107,6 @@ Sorty creates its configuration automatically on first run:
    ".mov",
    ".mkv"
   ]
-    // add your own path(s)&extension(s) here if you want
  }
 }
 ```
@@ -114,7 +116,10 @@ Sorty creates its configuration automatically on first run:
 ```  json
 {
  "log_level": 1,
- "watch_folder": "C:\\Users\\<username>\\Downloads",
+    "watch_folders": [
+    "C:\\Users\\<username>\\Downloads",
+    "T:\\any\\other\\folders\\..."
+  ],
  "monitor_files": {
   "C:\\Users\\<username>\\Documents": [
    ".pdf",
